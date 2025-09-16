@@ -1,15 +1,29 @@
 const express = require('express');
-const { resolve } = require('path');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
-const port = 3010;
+app.use(express.json());
 
-app.use(express.static('static'));
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/eventsDB';
+const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+
+.then(() => {
+  console.log('Connected to MonogoDB');
+})
+
+.catch((err) => {
+  console.log(`Error connecting to MongoDB: ${err}`);
 });
 
+
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Server listening on port ${port}`);
 });
